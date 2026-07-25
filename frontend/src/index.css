@@ -1,0 +1,102 @@
+body {
+  background: #f4f7fb;
+  font-family: "Segoe UI", sans-serif;
+  color: #1e293b;
+}
+
+.custom-navbar {
+  background: linear-gradient(135deg, #1e3a8a, #2563eb);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+}
+
+.hero-card {
+  background: linear-gradient(135deg, #2563eb, #1e40af);
+  color: white;
+  padding: 35px;
+  border-radius: 22px;
+  box-shadow: 0 12px 30px rgba(37, 99, 235, 0.3);
+}
+
+.hero-card h1 {
+  font-weight: 800;
+  margin-bottom: 8px;
+}
+
+.hero-card p {
+  margin: 0;
+  opacity: 0.9;
+}
+
+.stats-card {
+  background: white;
+  padding: 25px;
+  border-radius: 18px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  box-shadow: 0 8px 25px rgba(15, 23, 42, 0.08);
+  transition: 0.3s;
+}
+
+.stats-card:hover {
+  transform: translateY(-5px);
+}
+
+.stats-card i {
+  font-size: 38px;
+  color: #2563eb;
+}
+
+.stats-card h6 {
+  color: #64748b;
+  margin: 0;
+}
+
+.stats-card h2 {
+  font-weight: 800;
+  margin: 0;
+}
+
+.table-card {
+  background: white;
+  padding: 25px;
+  border-radius: 22px;
+  box-shadow: 0 8px 25px rgba(15, 23, 42, 0.08);
+}
+
+.table thead th {
+  background: #1e293b;
+  color: white;
+  padding: 14px;
+}
+
+.table tbody td {
+  padding: 14px;
+}
+
+.search-box {
+  border-radius: 12px;
+  padding: 12px;
+}
+
+.form-card {
+  background: white;
+  max-width: 520px;
+  padding: 35px;
+  border-radius: 22px;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.12);
+}
+
+.form-label {
+  font-weight: 600;
+}
+
+.form-control {
+  border-radius: 12px;
+  padding: 12px;
+}
+
+.btn {
+  border-radius: 10px;
+  font-weight: 600;
+}
