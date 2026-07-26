@@ -10,6 +10,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class StudentManagementApplication {
 
+	private static final String JDBC_POSTGRES_PREFIX = "jdbc:postgresql://";
+
 	public static void main(String[] args) {
 		configureDatabaseUrlFromEnvironment();
 		SpringApplication.run(StudentManagementApplication.class, args);
@@ -20,12 +22,13 @@ public class StudentManagementApplication {
 		String springDatasourceUsername = System.getenv("SPRING_DATASOURCE_USERNAME");
 		String springDatasourcePassword = System.getenv("SPRING_DATASOURCE_PASSWORD");
 		String databaseUrl = System.getenv("DATABASE_URL");
+		String datasourceUrl = hasText(springDatasourceUrl) ? springDatasourceUrl : databaseUrl;
 
-		if (hasText(springDatasourceUrl) || !hasText(databaseUrl)) {
+		if (!hasText(datasourceUrl)) {
 			return;
 		}
 
-		DatabaseConnection databaseConnection = parseDatabaseUrl(databaseUrl);
+		DatabaseConnection databaseConnection = parseDatabaseUrl(datasourceUrl);
 		System.setProperty("spring.datasource.url", databaseConnection.jdbcUrl());
 
 		if (!hasText(springDatasourceUsername) && hasText(databaseConnection.username())) {
@@ -38,22 +41,24 @@ public class StudentManagementApplication {
 	}
 
 	private static DatabaseConnection parseDatabaseUrl(String databaseUrl) {
-		if (databaseUrl.startsWith("jdbc:postgresql://")) {
-			return new DatabaseConnection(databaseUrl, null, null);
+		String normalizedUrl = databaseUrl;
+		if (normalizedUrl.startsWith(JDBC_POSTGRES_PREFIX)) {
+			normalizedUrl = normalizedUrl.substring("jdbc:".length());
 		}
 
-		URI uri = URI.create(databaseUrl);
+		URI uri = URI.create(normalizedUrl);
 		if (!"postgres".equals(uri.getScheme()) && !"postgresql".equals(uri.getScheme())) {
 			throw new IllegalArgumentException("Unsupported DATABASE_URL scheme: " + uri.getScheme());
 		}
 
-		StringBuilder jdbcUrl = new StringBuilder("jdbc:postgresql://").append(uri.getHost());
+		StringBuilder jdbcUrl = new StringBuilder(JDBC_POSTGRES_PREFIX).append(uri.getHost());
 		if (uri.getPort() != -1) {
 			jdbcUrl.append(':').append(uri.getPort());
 		}
 		jdbcUrl.append(hasText(uri.getRawPath()) ? uri.getRawPath() : "/");
-		if (hasText(uri.getRawQuery())) {
-			jdbcUrl.append('?').append(uri.getRawQuery());
+		String rawQuery = toJdbcQuery(uri.getRawQuery());
+		if (hasText(rawQuery)) {
+			jdbcUrl.append('?').append(rawQuery);
 		}
 
 		String username = null;
@@ -65,6 +70,30 @@ public class StudentManagementApplication {
 		}
 
 		return new DatabaseConnection(jdbcUrl.toString(), username, password);
+	}
+
+	private static String toJdbcQuery(String rawQuery) {
+		if (!hasText(rawQuery)) {
+			return rawQuery;
+		}
+
+		String[] parameters = rawQuery.split("&", -1);
+		for (int i = 0; i < parameters.length; i++) {
+			if ("channel_binding".equals(parameterName(parameters[i]))) {
+				parameters[i] = "channelBinding" + parameterValue(parameters[i]);
+			}
+		}
+		return String.join("&", parameters);
+	}
+
+	private static String parameterName(String parameter) {
+		int separatorIndex = parameter.indexOf('=');
+		return separatorIndex == -1 ? parameter : parameter.substring(0, separatorIndex);
+	}
+
+	private static String parameterValue(String parameter) {
+		int separatorIndex = parameter.indexOf('=');
+		return separatorIndex == -1 ? "" : parameter.substring(separatorIndex);
 	}
 
 	private static String decode(String value) {
