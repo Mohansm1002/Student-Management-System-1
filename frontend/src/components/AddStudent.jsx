@@ -11,6 +11,8 @@ function AddStudent() {
         age: "",
         course: "",
     });
+    const [saving, setSaving] = useState(false);
+    const [error, setError] = useState("");
 
     const handleChange = (e) => {
         setStudent({
@@ -22,8 +24,22 @@ function AddStudent() {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        await addStudent(student);
-        navigate("/");
+        setSaving(true);
+        setError("");
+
+        try {
+            await addStudent({
+                ...student,
+                id: Number(student.id),
+                age: Number(student.age),
+            });
+            navigate("/");
+        } catch (err) {
+            console.log("Error saving student:", err);
+            setError("Unable to save student. Please check the backend connection and try again.");
+        } finally {
+            setSaving(false);
+        }
     };
 
     return (
@@ -33,6 +49,8 @@ function AddStudent() {
                     <i className="bi bi-person-plus-fill me-2"></i>
                     Add Student
                 </h2>
+
+                {error && <div className="alert alert-danger">{error}</div>}
 
                 <form onSubmit={handleSubmit}>
                     <label className="form-label">Student ID</label>
@@ -79,9 +97,9 @@ function AddStudent() {
                         required
                     />
 
-                    <button className="btn btn-success w-100 mb-2">
+                    <button type="submit" className="btn btn-success w-100 mb-2" disabled={saving}>
                         <i className="bi bi-save-fill me-1"></i>
-                        Save Student
+                        {saving ? "Saving..." : "Save Student"}
                     </button>
 
                     <button

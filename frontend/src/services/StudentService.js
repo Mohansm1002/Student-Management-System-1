@@ -1,6 +1,31 @@
 import axios from "axios";
 
-const API_URL = import.meta.env.VITE_API_URL || "/api/students";
+const DEFAULT_BACKEND_URL = "https://student-management-system-1-pn1u.onrender.com";
+const STUDENTS_API_PATH = "/api/students";
+
+const resolveApiUrl = () => {
+    const configuredUrl = import.meta.env.VITE_API_URL?.trim();
+
+    if (!configuredUrl) {
+        return import.meta.env.PROD
+            ? `${DEFAULT_BACKEND_URL}${STUDENTS_API_PATH}`
+            : STUDENTS_API_PATH;
+    }
+
+    const normalizedUrl = configuredUrl.replace(/\/+$/, "");
+
+    if (normalizedUrl.endsWith(STUDENTS_API_PATH)) {
+        return normalizedUrl;
+    }
+
+    if (normalizedUrl.endsWith("/api")) {
+        return `${normalizedUrl}/students`;
+    }
+
+    return `${normalizedUrl}${STUDENTS_API_PATH}`;
+};
+
+const API_URL = resolveApiUrl();
 
 export const getStudents = () => {
     return axios.get(API_URL);
