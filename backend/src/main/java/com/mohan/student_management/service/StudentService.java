@@ -2,6 +2,7 @@ package com.mohan.student_management.service;
 
 import java.util.List;
 
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.mohan.student_management.entity.Student;
@@ -20,7 +21,7 @@ public class StudentService {
     }
 
     public List<Student> viewStudents() {
-        return studentRepository.findAll();
+        return studentRepository.findAll(Sort.by(Sort.Direction.ASC, "id"));
     }
 
     public Student searchStudent(int id) {
