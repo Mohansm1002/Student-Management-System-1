@@ -9,6 +9,19 @@ body {
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
 }
 
+.navbar-brand {
+  display: inline-flex;
+  align-items: center;
+}
+
+.brand-logo {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  object-fit: cover;
+  background: white;
+}
+
 .hero-card {
   background: linear-gradient(135deg, #2563eb, #1e40af);
   color: white;

@@ -1,10 +1,11 @@
 import { Link } from "react-router-dom";
+import icon from "../assets/icon.webp";
 
 function Navbar() {
     return (
         <nav className="navbar navbar-expand-lg navbar-dark custom-navbar px-4">
             <Link className="navbar-brand fw-bold fs-4" to="/">
-                <i className="bi bi-mortarboard-fill me-2"></i>
+                <img className="brand-logo me-2" src={icon} alt="Student Management" />
                 Student Management
             </Link>
 
